@@ -1378,719 +1378,719 @@
     // Enable this option for M852 to set skew at runtime
     //#define SKEW_CORRECTION_GCODE
   #endif
-// 
-//=============================================================================
-//============================= Additional Features ===========================
-//=============================================================================
-
-// @section extras
-
-//
-// EEPROM
-//
-// The microcontroller can store settings in the EEPROM, e.g. max velocity...
-// M500 - stores parameters in EEPROM
-// M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).
-// M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
-//
-#define EEPROM_SETTINGS // Enable for M500 and M501 commands
-//#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
-#define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
-
-//
-// Host Keepalive
-//
-// When enabled Marlin will send a busy status message to the host
-// every couple of seconds when it can't accept commands.
-//
-#define HOST_KEEPALIVE_FEATURE        // Disable this if your host doesn't like keepalive messages
-#define DEFAULT_KEEPALIVE_INTERVAL 2  // Number of seconds between "busy" messages. Set with M113.
-#define BUSY_WHILE_HEATING            // Some hosts require "busy" messages even during heating
-
-//
-// M100 Free Memory Watcher
-//
-//#define M100_FREE_MEMORY_WATCHER    // Add M100 (Free Memory Watcher) to debug memory usage
-
-//
-// G20/G21 Inch mode support
-//
-//#define INCH_MODE_SUPPORT
-
-//
-// M149 Set temperature units support
-//
-//#define TEMPERATURE_UNITS_SUPPORT
-
-// @section temperature
-
-// Preheat Constants
-#define PREHEAT_1_TEMP_HOTEND 190
-#define PREHEAT_1_TEMP_BED     60
-#define PREHEAT_1_FAN_SPEED   255 // Value from 0 to 255
-
-#define PREHEAT_2_TEMP_HOTEND 240
-#define PREHEAT_2_TEMP_BED    100
-#define PREHEAT_2_FAN_SPEED   255 // Value from 0 to 255
-
-/**
- * Nozzle Park
- *
- * Park the nozzle at the given XYZ position on idle or G27.
- *
- * The "P" parameter controls the action applied to the Z axis:
- *
- *    P0  (Default) If Z is below park Z raise the nozzle.
- *    P1  Raise the nozzle always to Z-park height.
- *    P2  Raise the nozzle by Z-park amount, limited to Z_MAX_POS.
- */
-#define NOZZLE_PARK_FEATURE
-
-#if ENABLED(NOZZLE_PARK_FEATURE)
-  // Specify a park position as { X, Y, Z }
-  #define NOZZLE_PARK_POINT { 0, 0, 20 }
-  #define NOZZLE_PARK_XY_FEEDRATE 100   // X and Y axes feedrate in mm/s (also used for delta printers Z axis)
-  #define NOZZLE_PARK_Z_FEEDRATE 100      // Z axis feedrate in mm/s (not used for delta printers)
-#endif
-
-/**
- * Clean Nozzle Feature -- EXPERIMENTAL
- *
- * Adds the G12 command to perform a nozzle cleaning process.
- *
- * Parameters:
- *   P  Pattern
- *   S  Strokes / Repetitions
- *   T  Triangles (P1 only)
- *
- * Patterns:
- *   P0  Straight line (default). This process requires a sponge type material
- *       at a fixed bed location. "S" specifies strokes (i.e. back-forth motions)
- *       between the start / end points.
- *
- *   P1  Zig-zag pattern between (X0, Y0) and (X1, Y1), "T" specifies the
- *       number of zig-zag triangles to do. "S" defines the number of strokes.
- *       Zig-zags are done in whichever is the narrower dimension.
- *       For example, "G12 P1 S1 T3" will execute:
- *
- *          --
- *         |  (X0, Y1) |     /\        /\        /\     | (X1, Y1)
- *         |           |    /  \      /  \      /  \    |
- *       A |           |   /    \    /    \    /    \   |
- *         |           |  /      \  /      \  /      \  |
- *         |  (X0, Y0) | /        \/        \/        \ | (X1, Y0)
- *          --         +--------------------------------+
- *                       |________|_________|_________|
- *                           T1        T2        T3
- *
- *   P2  Circular pattern with middle at NOZZLE_CLEAN_CIRCLE_MIDDLE.
- *       "R" specifies the radius. "S" specifies the stroke count.
- *       Before starting, the nozzle moves to NOZZLE_CLEAN_START_POINT.
- *
- *   Caveats: The ending Z should be the same as starting Z.
- * Attention: EXPERIMENTAL. G-code arguments may change.
- *
- */
-//#define NOZZLE_CLEAN_FEATURE
-
-#if ENABLED(NOZZLE_CLEAN_FEATURE)
-  // Default number of pattern repetitions
-  #define NOZZLE_CLEAN_STROKES  12
-
-  // Default number of triangles
-  #define NOZZLE_CLEAN_TRIANGLES  3
-
-  // Specify positions as { X, Y, Z }
-  #define NOZZLE_CLEAN_START_POINT { 30, 30, (Z_MIN_POS + 1)}
-  #define NOZZLE_CLEAN_END_POINT   {100, 60, (Z_MIN_POS + 1)}
-
-  // Circular pattern radius
-  #define NOZZLE_CLEAN_CIRCLE_RADIUS 6.5
-  // Circular pattern circle fragments number
-  #define NOZZLE_CLEAN_CIRCLE_FN 10
-  // Middle point of circle
-  #define NOZZLE_CLEAN_CIRCLE_MIDDLE NOZZLE_CLEAN_START_POINT
-
-  // Moves the nozzle to the initial position
-  #define NOZZLE_CLEAN_GOBACK
-#endif
-
-/**
- * Print Job Timer
- *
- * Automatically start and stop the print job timer on M104/M109/M190.
- *
- *   M104 (hotend, no wait) - high temp = none,        low temp = stop timer
- *   M109 (hotend, wait)    - high temp = start timer, low temp = stop timer
- *   M190 (bed, wait)       - high temp = start timer, low temp = none
- *
- * The timer can also be controlled with the following commands:
- *
- *   M75 - Start the print job timer
- *   M76 - Pause the print job timer
- *   M77 - Stop the print job timer
- */
-#define PRINTJOB_TIMER_AUTOSTART
-
-/**
- * Print Counter
- *
- * Track statistical data such as:
- *
- *  - Total print jobs
- *  - Total successful print jobs
- *  - Total failed print jobs
- *  - Total time printing
- *
- * View the current statistics with M78.
- */
-#define PRINTCOUNTER
-
-//=============================================================================
-//============================= LCD and SD support ============================
-//=============================================================================
-
-// @section lcd
-
-/**
- * LCD LANGUAGE
- *
- * Select the language to display on the LCD. These languages are available:
- *
- *    en, an, bg, ca, cn, cz, cz_utf8, de, el, el-gr, es, es_utf8,
- *    eu, fi, fr, fr_utf8, gl, hr, it, kana, kana_utf8, nl, pl, pt,
- *    pt_utf8, pt-br, pt-br_utf8, ru, sk_utf8, tr, uk, zh_CN, zh_TW, test
- *
- * :{ 'en':'English', 'an':'Aragonese', 'bg':'Bulgarian', 'ca':'Catalan', 'cn':'Chinese', 'cz':'Czech', 'cz_utf8':'Czech (UTF8)', 'de':'German', 'el':'Greek', 'el-gr':'Greek (Greece)', 'es':'Spanish', 'es_utf8':'Spanish (UTF8)', 'eu':'Basque-Euskera', 'fi':'Finnish', 'fr':'French', 'fr_utf8':'French (UTF8)', 'gl':'Galician', 'hr':'Croatian', 'it':'Italian', 'kana':'Japanese', 'kana_utf8':'Japanese (UTF8)', 'nl':'Dutch', 'pl':'Polish', 'pt':'Portuguese', 'pt-br':'Portuguese (Brazilian)', 'pt-br_utf8':'Portuguese (Brazilian UTF8)', 'pt_utf8':'Portuguese (UTF8)', 'ru':'Russian', 'sk_utf8':'Slovak (UTF8)', 'tr':'Turkish', 'uk':'Ukrainian', 'zh_CN':'Chinese (Simplified)', 'zh_TW':'Chinese (Taiwan)', 'test':'TEST' }
- */
-#define LCD_LANGUAGE en
-
-/**
- * LCD Character Set
- *
- * Note: This option is NOT applicable to Graphical Displays.
- *
- * All character-based LCDs provide ASCII plus one of these
- * language extensions:
- *
- *  - JAPANESE ... the most common
- *  - WESTERN  ... with more accented characters
- *  - CYRILLIC ... for the Russian language
- *
- * To determine the language extension installed on your controller:
- *
- *  - Compile and upload with LCD_LANGUAGE set to 'test'
- *  - Click the controller to view the LCD menu
- *  - The LCD will display Japanese, Western, or Cyrillic text
- *
- * See http://marlinfw.org/docs/development/lcd_language.html
- *
- * :['JAPANESE', 'WESTERN', 'CYRILLIC']
- */
-#define DISPLAY_CHARSET_HD44780 JAPANESE
-
-/**
- * SD CARD
- *
- * SD Card support is disabled by default. If your controller has an SD slot,
- * you must uncomment the following option or it won't work.
- *
- */
-#define SDSUPPORT
-
-/**
- * SD CARD: SPI SPEED
- *
- * Enable one of the following items for a slower SPI transfer speed.
- * This may be required to resolve "volume init" errors.
- */
-//#define SPI_SPEED SPI_HALF_SPEED
-//#define SPI_SPEED SPI_QUARTER_SPEED
-//#define SPI_SPEED SPI_EIGHTH_SPEED
-
-/**
- * SD CARD: ENABLE CRC
- *
- * Use CRC checks and retries on the SD communication.
- */
-//#define SD_CHECK_AND_RETRY
-
-/**
- * LCD Menu Items
- *
- * Disable all menus and only display the Status Screen, or
- * just remove some extraneous menu items to recover space.
- */
-//#define NO_LCD_MENUS
-//#define SLIM_LCD_MENUS
-
-//
-// ENCODER SETTINGS
-//
-// This option overrides the default number of encoder pulses needed to
-// produce one step. Should be increased for high-resolution encoders.
-//
-#define ENCODER_PULSES_PER_STEP 3
-
-//
-// Use this option to override the number of step signals required to
-// move between next/prev menu items.
-//
-#define ENCODER_STEPS_PER_MENU_ITEM 1
-
-/**
- * Encoder Direction Options
- *
- * Test your encoder's behavior first with both options disabled.
- *
- *  Reversed Value Edit and Menu Nav? Enable REVERSE_ENCODER_DIRECTION.
- *  Reversed Menu Navigation only?    Enable REVERSE_MENU_DIRECTION.
- *  Reversed Value Editing only?      Enable BOTH options.
- */
-
-//
-// This option reverses the encoder direction everywhere.
-//
-//  Set this option if CLOCKWISE causes values to DECREASE
-//
-#define REVERSE_ENCODER_DIRECTION
-
-//
-// This option reverses the encoder direction for navigating LCD menus.
-//
-//  If CLOCKWISE normally moves DOWN this makes it go UP.
-//  If CLOCKWISE normally moves UP this makes it go DOWN.
-//
-//#define REVERSE_MENU_DIRECTION
-
-//
-// Individual Axis Homing
-//
-// Add individual axis homing items (Home X, Home Y, and Home Z) to the LCD menu.
-//
-//#define INDIVIDUAL_AXIS_HOMING_MENU
-
-//
-// SPEAKER/BUZZER
-//
-// If you have a speaker that can produce tones, enable it here.
-// By default Marlin assumes you have a buzzer with a fixed frequency.
-//
-#define SPEAKER
-
-//
-// The duration and frequency for the UI feedback sound.
-// Set these to 0 to disable audio feedback in the LCD menus.
-//
-// Note: Test audio output with the G-Code:
-//  M300 S<frequency Hz> P<duration ms>
-//
-//#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-//#define LCD_FEEDBACK_FREQUENCY_HZ 5000
-
-//=============================================================================
-//======================== LCD / Controller Selection =========================
-//========================   (Character-based LCDs)   =========================
-//=============================================================================
-
-//
-// RepRapDiscount Smart Controller.
-// http://reprap.org/wiki/RepRapDiscount_Smart_Controller
-//
-// Note: Usually sold with a white PCB.
-//
-#define REPRAP_DISCOUNT_SMART_CONTROLLER
-
-//
-// ULTIMAKER Controller.
-//
-//#define ULTIMAKERCONTROLLER
-
-//
-// ULTIPANEL as seen on Thingiverse.
-//
-//#define ULTIPANEL
-
-//
-// PanelOne from T3P3 (via RAMPS 1.4 AUX2/AUX3)
-// http://reprap.org/wiki/PanelOne
-//
-//#define PANEL_ONE
-
-//
-// GADGETS3D G3D LCD/SD Controller
-// http://reprap.org/wiki/RAMPS_1.3/1.4_GADGETS3D_Shield_with_Panel
-//
-// Note: Usually sold with a blue PCB.
-//
-//#define G3D_PANEL
-
-//
-// RigidBot Panel V1.0
-// http://www.inventapart.com/
-//
-//#define RIGIDBOT_PANEL
-
-//
-// Makeboard 3D Printer Parts 3D Printer Mini Display 1602 Mini Controller
-// https://www.aliexpress.com/item/Micromake-Makeboard-3D-Printer-Parts-3D-Printer-Mini-Display-1602-Mini-Controller-Compatible-with-Ramps-1/32765887917.html
-//
-//#define MAKEBOARD_MINI_2_LINE_DISPLAY_1602
-
-//
-// ANET and Tronxy 20x4 Controller
-//
-//#define ZONESTAR_LCD            // Requires ADC_KEYPAD_PIN to be assigned to an analog pin.
-                                  // This LCD is known to be susceptible to electrical interference
-                                  // which scrambles the display.  Pressing any button clears it up.
-                                  // This is a LCD2004 display with 5 analog buttons.
-
-//
-// Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.
-//
-//#define ULTRA_LCD
-
-//=============================================================================
-//======================== LCD / Controller Selection =========================
-//=====================   (I2C and Shift-Register LCDs)   =====================
-//=============================================================================
-
-//
-// CONTROLLER TYPE: I2C
-//
-// Note: These controllers require the installation of Arduino's LiquidCrystal_I2C
-// library. For more info: https://github.com/kiyoshigawa/LiquidCrystal_I2C
-//
-
-//
-// Elefu RA Board Control Panel
-// http://www.elefu.com/index.php?route=product/product&product_id=53
-//
-//#define RA_CONTROL_PANEL
-
-//
-// Sainsmart (YwRobot) LCD Displays
-//
-// These require F.Malpartida's LiquidCrystal_I2C library
-// https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
-//
-//#define LCD_SAINSMART_I2C_1602
-//#define LCD_SAINSMART_I2C_2004
-
-//
-// Generic LCM1602 LCD adapter
-//
-//#define LCM1602
-
-//
-// PANELOLU2 LCD with status LEDs,
-// separate encoder and click inputs.
-//
-// Note: This controller requires Arduino's LiquidTWI2 library v1.2.3 or later.
-// For more info: https://github.com/lincomatic/LiquidTWI2
-//
-// Note: The PANELOLU2 encoder click input can either be directly connected to
-// a pin (if BTN_ENC defined to != -1) or read through I2C (when BTN_ENC == -1).
-//
-//#define LCD_I2C_PANELOLU2
-
-//
-// Panucatt VIKI LCD with status LEDs,
-// integrated click & L/R/U/D buttons, separate encoder inputs.
-//
-//#define LCD_I2C_VIKI
-
-//
-// CONTROLLER TYPE: Shift register panels
-//
-
-//
-// 2 wire Non-latching LCD SR from https://goo.gl/aJJ4sH
-// LCD configuration: http://reprap.org/wiki/SAV_3D_LCD
-//
-//#define SAV_3DLCD
-
-//=============================================================================
-//=======================   LCD / Controller Selection  =======================
-//=========================      (Graphical LCDs)      ========================
-//=============================================================================
-
-//
-// CONTROLLER TYPE: Graphical 128x64 (DOGM)
-//
-// IMPORTANT: The U8glib library is required for Graphical Display!
-//            https://github.com/olikraus/U8glib_Arduino
-//
-
-//
-// RepRapDiscount FULL GRAPHIC Smart Controller
-// http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
-//
-//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
-
-//
-// ReprapWorld Graphical LCD
-// https://reprapworld.com/?products_details&products_id/1218
-//
-//#define REPRAPWORLD_GRAPHICAL_LCD
-
-//
-// Activate one of these if you have a Panucatt Devices
-// Viki 2.0 or mini Viki with Graphic LCD
-// http://panucatt.com
-//
-//#define VIKI2
-//#define miniVIKI
-
-//
-// MakerLab Mini Panel with graphic
-// controller and SD support - http://reprap.org/wiki/Mini_panel
-//
-//#define MINIPANEL
-
-//
-// MaKr3d Makr-Panel with graphic controller and SD support.
-// http://reprap.org/wiki/MaKr3d_MaKrPanel
-//
-//#define MAKRPANEL
-
-//
-// Adafruit ST7565 Full Graphic Controller.
-// https://github.com/eboston/Adafruit-ST7565-Full-Graphic-Controller/
-//
-//#define ELB_FULL_GRAPHIC_CONTROLLER
-
-//
-// BQ LCD Smart Controller shipped by
-// default with the BQ Hephestos 2 and Witbox 2.
-//
-//#define BQ_LCD_SMART_CONTROLLER
-
-//
-// Cartesio UI
-// http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
-//
-//#define CARTESIO_UI
-
-//
-// LCD for Melzi Card with Graphical LCD
-//
-//#define LCD_FOR_MELZI
-
-//
-// SSD1306 OLED full graphics generic display
-//
-//#define U8GLIB_SSD1306
-
-//
-// SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules
-//
-//#define SAV_3DGLCD
-#if ENABLED(SAV_3DGLCD)
+// ADDITIONAL FEATURES             //
+  //=============================================================================
+  //============================= Additional Features ===========================
+  //=============================================================================
+
+  // @section extras
+
+  //
+  // EEPROM
+  //
+  // The microcontroller can store settings in the EEPROM, e.g. max velocity...
+  // M500 - stores parameters in EEPROM
+  // M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).
+  // M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
+  //
+  #define EEPROM_SETTINGS // Enable for M500 and M501 commands
+  //#define DISABLE_M503    // Saves ~2700 bytes of PROGMEM. Disable for release!
+  #define EEPROM_CHITCHAT   // Give feedback on EEPROM commands. Disable to save PROGMEM.
+
+  //
+  // Host Keepalive
+  //
+  // When enabled Marlin will send a busy status message to the host
+  // every couple of seconds when it can't accept commands.
+  //
+  #define HOST_KEEPALIVE_FEATURE        // Disable this if your host doesn't like keepalive messages
+  #define DEFAULT_KEEPALIVE_INTERVAL 2  // Number of seconds between "busy" messages. Set with M113.
+  #define BUSY_WHILE_HEATING            // Some hosts require "busy" messages even during heating
+
+  //
+  // M100 Free Memory Watcher
+  //
+  //#define M100_FREE_MEMORY_WATCHER    // Add M100 (Free Memory Watcher) to debug memory usage
+
+  //
+  // G20/G21 Inch mode support
+  //
+  //#define INCH_MODE_SUPPORT
+
+  //
+  // M149 Set temperature units support
+  //
+  //#define TEMPERATURE_UNITS_SUPPORT
+
+  // @section temperature
+
+  // Preheat Constants
+  #define PREHEAT_1_TEMP_HOTEND 190
+  #define PREHEAT_1_TEMP_BED     60
+  #define PREHEAT_1_FAN_SPEED   255 // Value from 0 to 255
+
+  #define PREHEAT_2_TEMP_HOTEND 240
+  #define PREHEAT_2_TEMP_BED    100
+  #define PREHEAT_2_FAN_SPEED   255 // Value from 0 to 255
+
+  /**
+   * Nozzle Park
+   *
+   * Park the nozzle at the given XYZ position on idle or G27.
+   *
+   * The "P" parameter controls the action applied to the Z axis:
+   *
+   *    P0  (Default) If Z is below park Z raise the nozzle.
+   *    P1  Raise the nozzle always to Z-park height.
+   *    P2  Raise the nozzle by Z-park amount, limited to Z_MAX_POS.
+   */
+  #define NOZZLE_PARK_FEATURE
+
+  #if ENABLED(NOZZLE_PARK_FEATURE)
+    // Specify a park position as { X, Y, Z }
+    #define NOZZLE_PARK_POINT { 0, 0, 20 }
+    #define NOZZLE_PARK_XY_FEEDRATE 100   // X and Y axes feedrate in mm/s (also used for delta printers Z axis)
+    #define NOZZLE_PARK_Z_FEEDRATE 100      // Z axis feedrate in mm/s (not used for delta printers)
+  #endif
+
+  /**
+   * Clean Nozzle Feature -- EXPERIMENTAL
+   *
+   * Adds the G12 command to perform a nozzle cleaning process.
+   *
+   * Parameters:
+   *   P  Pattern
+   *   S  Strokes / Repetitions
+   *   T  Triangles (P1 only)
+   *
+   * Patterns:
+   *   P0  Straight line (default). This process requires a sponge type material
+   *       at a fixed bed location. "S" specifies strokes (i.e. back-forth motions)
+   *       between the start / end points.
+   *
+   *   P1  Zig-zag pattern between (X0, Y0) and (X1, Y1), "T" specifies the
+   *       number of zig-zag triangles to do. "S" defines the number of strokes.
+   *       Zig-zags are done in whichever is the narrower dimension.
+   *       For example, "G12 P1 S1 T3" will execute:
+   *
+   *          --
+   *         |  (X0, Y1) |     /\        /\        /\     | (X1, Y1)
+   *         |           |    /  \      /  \      /  \    |
+   *       A |           |   /    \    /    \    /    \   |
+   *         |           |  /      \  /      \  /      \  |
+   *         |  (X0, Y0) | /        \/        \/        \ | (X1, Y0)
+   *          --         +--------------------------------+
+   *                       |________|_________|_________|
+   *                           T1        T2        T3
+   *
+   *   P2  Circular pattern with middle at NOZZLE_CLEAN_CIRCLE_MIDDLE.
+   *       "R" specifies the radius. "S" specifies the stroke count.
+   *       Before starting, the nozzle moves to NOZZLE_CLEAN_START_POINT.
+   *
+   *   Caveats: The ending Z should be the same as starting Z.
+   * Attention: EXPERIMENTAL. G-code arguments may change.
+   *
+   */
+  //#define NOZZLE_CLEAN_FEATURE
+
+  #if ENABLED(NOZZLE_CLEAN_FEATURE)
+    // Default number of pattern repetitions
+    #define NOZZLE_CLEAN_STROKES  12
+
+    // Default number of triangles
+    #define NOZZLE_CLEAN_TRIANGLES  3
+
+    // Specify positions as { X, Y, Z }
+    #define NOZZLE_CLEAN_START_POINT { 30, 30, (Z_MIN_POS + 1)}
+    #define NOZZLE_CLEAN_END_POINT   {100, 60, (Z_MIN_POS + 1)}
+
+    // Circular pattern radius
+    #define NOZZLE_CLEAN_CIRCLE_RADIUS 6.5
+    // Circular pattern circle fragments number
+    #define NOZZLE_CLEAN_CIRCLE_FN 10
+    // Middle point of circle
+    #define NOZZLE_CLEAN_CIRCLE_MIDDLE NOZZLE_CLEAN_START_POINT
+
+    // Moves the nozzle to the initial position
+    #define NOZZLE_CLEAN_GOBACK
+  #endif
+
+  /**
+   * Print Job Timer
+   *
+   * Automatically start and stop the print job timer on M104/M109/M190.
+   *
+   *   M104 (hotend, no wait) - high temp = none,        low temp = stop timer
+   *   M109 (hotend, wait)    - high temp = start timer, low temp = stop timer
+   *   M190 (bed, wait)       - high temp = start timer, low temp = none
+   *
+   * The timer can also be controlled with the following commands:
+   *
+   *   M75 - Start the print job timer
+   *   M76 - Pause the print job timer
+   *   M77 - Stop the print job timer
+   */
+  #define PRINTJOB_TIMER_AUTOSTART
+
+  /**
+   * Print Counter
+   *
+   * Track statistical data such as:
+   *
+   *  - Total print jobs
+   *  - Total successful print jobs
+   *  - Total failed print jobs
+   *  - Total time printing
+   *
+   * View the current statistics with M78.
+   */
+  #define PRINTCOUNTER
+// LCD and SD support
+  //=============================================================================
+  //============================= LCD and SD support ============================
+  //=============================================================================
+
+  // @section lcd
+
+  /**
+   * LCD LANGUAGE
+   *
+   * Select the language to display on the LCD. These languages are available:
+   *
+   *    en, an, bg, ca, cn, cz, cz_utf8, de, el, el-gr, es, es_utf8,
+   *    eu, fi, fr, fr_utf8, gl, hr, it, kana, kana_utf8, nl, pl, pt,
+   *    pt_utf8, pt-br, pt-br_utf8, ru, sk_utf8, tr, uk, zh_CN, zh_TW, test
+   *
+   * :{ 'en':'English', 'an':'Aragonese', 'bg':'Bulgarian', 'ca':'Catalan', 'cn':'Chinese', 'cz':'Czech', 'cz_utf8':'Czech (UTF8)', 'de':'German', 'el':'Greek', 'el-gr':'Greek (Greece)', 'es':'Spanish', 'es_utf8':'Spanish (UTF8)', 'eu':'Basque-Euskera', 'fi':'Finnish', 'fr':'French', 'fr_utf8':'French (UTF8)', 'gl':'Galician', 'hr':'Croatian', 'it':'Italian', 'kana':'Japanese', 'kana_utf8':'Japanese (UTF8)', 'nl':'Dutch', 'pl':'Polish', 'pt':'Portuguese', 'pt-br':'Portuguese (Brazilian)', 'pt-br_utf8':'Portuguese (Brazilian UTF8)', 'pt_utf8':'Portuguese (UTF8)', 'ru':'Russian', 'sk_utf8':'Slovak (UTF8)', 'tr':'Turkish', 'uk':'Ukrainian', 'zh_CN':'Chinese (Simplified)', 'zh_TW':'Chinese (Taiwan)', 'test':'TEST' }
+   */
+  #define LCD_LANGUAGE en
+
+  /**
+   * LCD Character Set
+   *
+   * Note: This option is NOT applicable to Graphical Displays.
+   *
+   * All character-based LCDs provide ASCII plus one of these
+   * language extensions:
+   *
+   *  - JAPANESE ... the most common
+   *  - WESTERN  ... with more accented characters
+   *  - CYRILLIC ... for the Russian language
+   *
+   * To determine the language extension installed on your controller:
+   *
+   *  - Compile and upload with LCD_LANGUAGE set to 'test'
+   *  - Click the controller to view the LCD menu
+   *  - The LCD will display Japanese, Western, or Cyrillic text
+   *
+   * See http://marlinfw.org/docs/development/lcd_language.html
+   *
+   * :['JAPANESE', 'WESTERN', 'CYRILLIC']
+   */
+  #define DISPLAY_CHARSET_HD44780 JAPANESE
+
+  /**
+   * SD CARD
+   *
+   * SD Card support is disabled by default. If your controller has an SD slot,
+   * you must uncomment the following option or it won't work.
+   *
+   */
+  #define SDSUPPORT
+
+  /**
+   * SD CARD: SPI SPEED
+   *
+   * Enable one of the following items for a slower SPI transfer speed.
+   * This may be required to resolve "volume init" errors.
+   */
+  //#define SPI_SPEED SPI_HALF_SPEED
+  //#define SPI_SPEED SPI_QUARTER_SPEED
+  //#define SPI_SPEED SPI_EIGHTH_SPEED
+
+  /**
+   * SD CARD: ENABLE CRC
+   *
+   * Use CRC checks and retries on the SD communication.
+   */
+  //#define SD_CHECK_AND_RETRY
+
+  /**
+   * LCD Menu Items
+   *
+   * Disable all menus and only display the Status Screen, or
+   * just remove some extraneous menu items to recover space.
+   */
+  //#define NO_LCD_MENUS
+  //#define SLIM_LCD_MENUS
+
+  //
+  // ENCODER SETTINGS
+  //
+  // This option overrides the default number of encoder pulses needed to
+  // produce one step. Should be increased for high-resolution encoders.
+  //
+  #define ENCODER_PULSES_PER_STEP 3
+
+  //
+  // Use this option to override the number of step signals required to
+  // move between next/prev menu items.
+  //
+  #define ENCODER_STEPS_PER_MENU_ITEM 1
+
+  /**
+   * Encoder Direction Options
+   *
+   * Test your encoder's behavior first with both options disabled.
+   *
+   *  Reversed Value Edit and Menu Nav? Enable REVERSE_ENCODER_DIRECTION.
+   *  Reversed Menu Navigation only?    Enable REVERSE_MENU_DIRECTION.
+   *  Reversed Value Editing only?      Enable BOTH options.
+   */
+
+  //
+  // This option reverses the encoder direction everywhere.
+  //
+  //  Set this option if CLOCKWISE causes values to DECREASE
+  //
+  #define REVERSE_ENCODER_DIRECTION
+
+  //
+  // This option reverses the encoder direction for navigating LCD menus.
+  //
+  //  If CLOCKWISE normally moves DOWN this makes it go UP.
+  //  If CLOCKWISE normally moves UP this makes it go DOWN.
+  //
+  //#define REVERSE_MENU_DIRECTION
+
+  //
+  // Individual Axis Homing
+  //
+  // Add individual axis homing items (Home X, Home Y, and Home Z) to the LCD menu.
+  //
+  //#define INDIVIDUAL_AXIS_HOMING_MENU
+
+  //
+  // SPEAKER/BUZZER
+  //
+  // If you have a speaker that can produce tones, enable it here.
+  // By default Marlin assumes you have a buzzer with a fixed frequency.
+  //
+  #define SPEAKER
+
+  //
+  // The duration and frequency for the UI feedback sound.
+  // Set these to 0 to disable audio feedback in the LCD menus.
+  //
+  // Note: Test audio output with the G-Code:
+  //  M300 S<frequency Hz> P<duration ms>
+  //
+  //#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+  //#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+// LCD / Controller Selection (Character-based LCDs)
+  //=============================================================================
+  //======================== LCD / Controller Selection =========================
+  //========================   (Character-based LCDs)   =========================
+  //=============================================================================
+
+  //
+  // RepRapDiscount Smart Controller.
+  // http://reprap.org/wiki/RepRapDiscount_Smart_Controller
+  //
+  // Note: Usually sold with a white PCB.
+  //
+  #define REPRAP_DISCOUNT_SMART_CONTROLLER
+
+  //
+  // ULTIMAKER Controller.
+  //
+  //#define ULTIMAKERCONTROLLER
+
+  //
+  // ULTIPANEL as seen on Thingiverse.
+  //
+  //#define ULTIPANEL
+
+  //
+  // PanelOne from T3P3 (via RAMPS 1.4 AUX2/AUX3)
+  // http://reprap.org/wiki/PanelOne
+  //
+  //#define PANEL_ONE
+
+  //
+  // GADGETS3D G3D LCD/SD Controller
+  // http://reprap.org/wiki/RAMPS_1.3/1.4_GADGETS3D_Shield_with_Panel
+  //
+  // Note: Usually sold with a blue PCB.
+  //
+  //#define G3D_PANEL
+
+  //
+  // RigidBot Panel V1.0
+  // http://www.inventapart.com/
+  //
+  //#define RIGIDBOT_PANEL
+
+  //
+  // Makeboard 3D Printer Parts 3D Printer Mini Display 1602 Mini Controller
+  // https://www.aliexpress.com/item/Micromake-Makeboard-3D-Printer-Parts-3D-Printer-Mini-Display-1602-Mini-Controller-Compatible-with-Ramps-1/32765887917.html
+  //
+  //#define MAKEBOARD_MINI_2_LINE_DISPLAY_1602
+
+  //
+  // ANET and Tronxy 20x4 Controller
+  //
+  //#define ZONESTAR_LCD            // Requires ADC_KEYPAD_PIN to be assigned to an analog pin.
+                                    // This LCD is known to be susceptible to electrical interference
+                                    // which scrambles the display.  Pressing any button clears it up.
+                                    // This is a LCD2004 display with 5 analog buttons.
+
+  //
+  // Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.
+  //
+  //#define ULTRA_LCD
+// LCD / Controller Selection (I2C and Shift-Register LCDs)
+  //=============================================================================
+  //======================== LCD / Controller Selection =========================
+  //=====================   (I2C and Shift-Register LCDs)   =====================
+  //=============================================================================
+
+  //
+  // CONTROLLER TYPE: I2C
+  //
+  // Note: These controllers require the installation of Arduino's LiquidCrystal_I2C
+  // library. For more info: https://github.com/kiyoshigawa/LiquidCrystal_I2C
+  //
+
+  //
+  // Elefu RA Board Control Panel
+  // http://www.elefu.com/index.php?route=product/product&product_id=53
+  //
+  //#define RA_CONTROL_PANEL
+
+  //
+  // Sainsmart (YwRobot) LCD Displays
+  //
+  // These require F.Malpartida's LiquidCrystal_I2C library
+  // https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+  //
+  //#define LCD_SAINSMART_I2C_1602
+  //#define LCD_SAINSMART_I2C_2004
+
+  //
+  // Generic LCM1602 LCD adapter
+  //
+  //#define LCM1602
+
+  //
+  // PANELOLU2 LCD with status LEDs,
+  // separate encoder and click inputs.
+  //
+  // Note: This controller requires Arduino's LiquidTWI2 library v1.2.3 or later.
+  // For more info: https://github.com/lincomatic/LiquidTWI2
+  //
+  // Note: The PANELOLU2 encoder click input can either be directly connected to
+  // a pin (if BTN_ENC defined to != -1) or read through I2C (when BTN_ENC == -1).
+  //
+  //#define LCD_I2C_PANELOLU2
+
+  //
+  // Panucatt VIKI LCD with status LEDs,
+  // integrated click & L/R/U/D buttons, separate encoder inputs.
+  //
+  //#define LCD_I2C_VIKI
+
+  //
+  // CONTROLLER TYPE: Shift register panels
+  //
+
+  //
+  // 2 wire Non-latching LCD SR from https://goo.gl/aJJ4sH
+  // LCD configuration: http://reprap.org/wiki/SAV_3D_LCD
+  //
+  //#define SAV_3DLCD
+// LCD / Controller Selection (Graphical LCDs)
+  //=============================================================================
+  //=======================   LCD / Controller Selection  =======================
+  //=========================      (Graphical LCDs)      ========================
+  //=============================================================================
+
+  //
+  // CONTROLLER TYPE: Graphical 128x64 (DOGM)
+  //
+  // IMPORTANT: The U8glib library is required for Graphical Display!
+  //            https://github.com/olikraus/U8glib_Arduino
+  //
+
+  //
+  // RepRapDiscount FULL GRAPHIC Smart Controller
+  // http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
+  //
+  //#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+
+  //
+  // ReprapWorld Graphical LCD
+  // https://reprapworld.com/?products_details&products_id/1218
+  //
+  //#define REPRAPWORLD_GRAPHICAL_LCD
+
+  //
+  // Activate one of these if you have a Panucatt Devices
+  // Viki 2.0 or mini Viki with Graphic LCD
+  // http://panucatt.com
+  //
+  //#define VIKI2
+  //#define miniVIKI
+
+  //
+  // MakerLab Mini Panel with graphic
+  // controller and SD support - http://reprap.org/wiki/Mini_panel
+  //
+  //#define MINIPANEL
+
+  //
+  // MaKr3d Makr-Panel with graphic controller and SD support.
+  // http://reprap.org/wiki/MaKr3d_MaKrPanel
+  //
+  //#define MAKRPANEL
+
+  //
+  // Adafruit ST7565 Full Graphic Controller.
+  // https://github.com/eboston/Adafruit-ST7565-Full-Graphic-Controller/
+  //
+  //#define ELB_FULL_GRAPHIC_CONTROLLER
+
+  //
+  // BQ LCD Smart Controller shipped by
+  // default with the BQ Hephestos 2 and Witbox 2.
+  //
+  //#define BQ_LCD_SMART_CONTROLLER
+
+  //
+  // Cartesio UI
+  // http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
+  //
+  //#define CARTESIO_UI
+
+  //
+  // LCD for Melzi Card with Graphical LCD
+  //
+  //#define LCD_FOR_MELZI
+
+  //
+  // SSD1306 OLED full graphics generic display
+  //
   //#define U8GLIB_SSD1306
-  #define U8GLIB_SH1106
-#endif
 
-//
-// Original Ulticontroller from Ultimaker 2 printer with SSD1309 I2C display and encoder
-// https://github.com/Ultimaker/Ultimaker2/tree/master/1249_Ulticontroller_Board_(x1)
-//
-//#define ULTI_CONTROLLER
+  //
+  // SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules
+  //
+  //#define SAV_3DGLCD
+  #if ENABLED(SAV_3DGLCD)
+    //#define U8GLIB_SSD1306
+    #define U8GLIB_SH1106
+  #endif
 
-//
-// TinyBoy2 128x64 OLED / Encoder Panel
-//
-//#define OLED_PANEL_TINYBOY2
+  //
+  // Original Ulticontroller from Ultimaker 2 printer with SSD1309 I2C display and encoder
+  // https://github.com/Ultimaker/Ultimaker2/tree/master/1249_Ulticontroller_Board_(x1)
+  //
+  //#define ULTI_CONTROLLER
 
-//
-// MKS MINI12864 with graphic controller and SD support
-// http://reprap.org/wiki/MKS_MINI_12864
-//
-//#define MKS_MINI_12864
+  //
+  // TinyBoy2 128x64 OLED / Encoder Panel
+  //
+  //#define OLED_PANEL_TINYBOY2
 
-//
-// Factory display for Creality CR-10
-// https://www.aliexpress.com/item/Universal-LCD-12864-3D-Printer-Display-Screen-With-Encoder-For-CR-10-CR-7-Model/32833148327.html
-//
-// This is RAMPS-compatible using a single 10-pin connector.
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
-//
-//#define CR10_STOCKDISPLAY
+  //
+  // MKS MINI12864 with graphic controller and SD support
+  // http://reprap.org/wiki/MKS_MINI_12864
+  //
+  //#define MKS_MINI_12864
 
-//
-// ANET and Tronxy Graphical Controller
-//
-//#define ANET_FULL_GRAPHICS_LCD  // Anet 128x64 full graphics lcd with rotary encoder as used on Anet A6
-                                  // A clone of the RepRapDiscount full graphics display but with
-                                  // different pins/wiring (see pins_ANET_10.h).
+  //
+  // Factory display for Creality CR-10
+  // https://www.aliexpress.com/item/Universal-LCD-12864-3D-Printer-Display-Screen-With-Encoder-For-CR-10-CR-7-Model/32833148327.html
+  //
+  // This is RAMPS-compatible using a single 10-pin connector.
+  // (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+  //
+  //#define CR10_STOCKDISPLAY
 
-//
-// MKS OLED 1.3" 128 × 64 FULL GRAPHICS CONTROLLER
-// http://reprap.org/wiki/MKS_12864OLED
-//
-// Tiny, but very sharp OLED display
-//
-//#define MKS_12864OLED          // Uses the SH1106 controller (default)
-//#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller
+  //
+  // ANET and Tronxy Graphical Controller
+  //
+  //#define ANET_FULL_GRAPHICS_LCD  // Anet 128x64 full graphics lcd with rotary encoder as used on Anet A6
+                                    // A clone of the RepRapDiscount full graphics display but with
+                                    // different pins/wiring (see pins_ANET_10.h).
 
-//
-// Silvergate GLCD controller
-// http://github.com/android444/Silvergate
-//
-//#define SILVER_GATE_GLCD_CONTROLLER
+  //
+  // MKS OLED 1.3" 128 × 64 FULL GRAPHICS CONTROLLER
+  // http://reprap.org/wiki/MKS_12864OLED
+  //
+  // Tiny, but very sharp OLED display
+  //
+  //#define MKS_12864OLED          // Uses the SH1106 controller (default)
+  //#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller
 
-//=============================================================================
-//============================  Other Controllers  ============================
-//=============================================================================
+  //
+  // Silvergate GLCD controller
+  // http://github.com/android444/Silvergate
+  //
+  //#define SILVER_GATE_GLCD_CONTROLLER
+// Other Controllers
+  //=============================================================================
+  //============================  Other Controllers  ============================
+  //=============================================================================
 
-//
-// CONTROLLER TYPE: Standalone / Serial
-//
+  //
+  // CONTROLLER TYPE: Standalone / Serial
+  //
 
-//
-// LCD for Malyan M200 printers.
-//
-//#define MALYAN_LCD
+  //
+  // LCD for Malyan M200 printers.
+  //
+  //#define MALYAN_LCD
 
-//
-// CONTROLLER TYPE: Keypad / Add-on
-//
+  //
+  // CONTROLLER TYPE: Keypad / Add-on
+  //
 
-//
-// RepRapWorld REPRAPWORLD_KEYPAD v1.1
-// http://reprapworld.com/?products_details&products_id=202&cPath=1591_1626
-//
-// REPRAPWORLD_KEYPAD_MOVE_STEP sets how much should the robot move when a key
-// is pressed, a value of 10.0 means 10mm per click.
-//
-//#define REPRAPWORLD_KEYPAD
-//#define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0
+  //
+  // RepRapWorld REPRAPWORLD_KEYPAD v1.1
+  // http://reprapworld.com/?products_details&products_id=202&cPath=1591_1626
+  //
+  // REPRAPWORLD_KEYPAD_MOVE_STEP sets how much should the robot move when a key
+  // is pressed, a value of 10.0 means 10mm per click.
+  //
+  //#define REPRAPWORLD_KEYPAD
+  //#define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0
+// Extra Features
+  //=============================================================================
+  //=============================== Extra Features ==============================
+  //=============================================================================
 
-//=============================================================================
-//=============================== Extra Features ==============================
-//=============================================================================
+  // @section extras
 
-// @section extras
+  // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
+  //#define FAST_PWM_FAN
 
-// Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
-//#define FAST_PWM_FAN
+  // Use software PWM to drive the fan, as for the heaters. This uses a very low frequency
+  // which is not as annoying as with the hardware PWM. On the other hand, if this frequency
+  // is too low, you should also increment SOFT_PWM_SCALE.
+  //#define FAN_SOFT_PWM
 
-// Use software PWM to drive the fan, as for the heaters. This uses a very low frequency
-// which is not as annoying as with the hardware PWM. On the other hand, if this frequency
-// is too low, you should also increment SOFT_PWM_SCALE.
-//#define FAN_SOFT_PWM
+  // Incrementing this by 1 will double the software PWM frequency,
+  // affecting heaters, and the fan if FAN_SOFT_PWM is enabled.
+  // However, control resolution will be halved for each increment;
+  // at zero value, there are 128 effective control positions.
+  #define SOFT_PWM_SCALE 0
 
-// Incrementing this by 1 will double the software PWM frequency,
-// affecting heaters, and the fan if FAN_SOFT_PWM is enabled.
-// However, control resolution will be halved for each increment;
-// at zero value, there are 128 effective control positions.
-#define SOFT_PWM_SCALE 0
+  // If SOFT_PWM_SCALE is set to a value higher than 0, dithering can
+  // be used to mitigate the associated resolution loss. If enabled,
+  // some of the PWM cycles are stretched so on average the desired
+  // duty cycle is attained.
+  //#define SOFT_PWM_DITHER
 
-// If SOFT_PWM_SCALE is set to a value higher than 0, dithering can
-// be used to mitigate the associated resolution loss. If enabled,
-// some of the PWM cycles are stretched so on average the desired
-// duty cycle is attained.
-//#define SOFT_PWM_DITHER
+  // Temperature status LEDs that display the hotend and bed temperature.
+  // If all hotends, bed temperature, and target temperature are under 54C
+  // then the BLUE led is on. Otherwise the RED led is on. (1C hysteresis)
+  //#define TEMP_STAT_LEDS
 
-// Temperature status LEDs that display the hotend and bed temperature.
-// If all hotends, bed temperature, and target temperature are under 54C
-// then the BLUE led is on. Otherwise the RED led is on. (1C hysteresis)
-//#define TEMP_STAT_LEDS
+  // M240  Triggers a camera by emulating a Canon RC-1 Remote
+  // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
+  //#define PHOTOGRAPH_PIN     23
 
-// M240  Triggers a camera by emulating a Canon RC-1 Remote
-// Data from: http://www.doc-diy.net/photo/rc-1_hacked/
-//#define PHOTOGRAPH_PIN     23
+  // SkeinForge sends the wrong arc g-codes when using Arc Point as fillet procedure
+  //#define SF_ARC_FIX
 
-// SkeinForge sends the wrong arc g-codes when using Arc Point as fillet procedure
-//#define SF_ARC_FIX
+  // Support for the BariCUDA Paste Extruder
+  //#define BARICUDA
 
-// Support for the BariCUDA Paste Extruder
-//#define BARICUDA
+  // Support for BlinkM/CyzRgb
+  //#define BLINKM
 
-// Support for BlinkM/CyzRgb
-//#define BLINKM
+  // Support for PCA9632 PWM LED driver
+  //#define PCA9632
 
-// Support for PCA9632 PWM LED driver
-//#define PCA9632
+  /**
+   * RGB LED / LED Strip Control
+   *
+   * Enable support for an RGB LED connected to 5V digital pins, or
+   * an RGB Strip connected to MOSFETs controlled by digital pins.
+   *
+   * Adds the M150 command to set the LED (or LED strip) color.
+   * If pins are PWM capable (e.g., 4, 5, 6, 11) then a range of
+   * luminance values can be set from 0 to 255.
+   * For Neopixel LED an overall brightness parameter is also available.
+   *
+   * *** CAUTION ***
+   *  LED Strips require a MOSFET Chip between PWM lines and LEDs,
+   *  as the Arduino cannot handle the current the LEDs will require.
+   *  Failure to follow this precaution can destroy your Arduino!
+   *  NOTE: A separate 5V power supply is required! The Neopixel LED needs
+   *  more current than the Arduino 5V linear regulator can produce.
+   * *** CAUTION ***
+   *
+   * LED Type. Enable only one of the following two options.
+   *
+   */
+  //#define RGB_LED
+  //#define RGBW_LED
 
-/**
- * RGB LED / LED Strip Control
- *
- * Enable support for an RGB LED connected to 5V digital pins, or
- * an RGB Strip connected to MOSFETs controlled by digital pins.
- *
- * Adds the M150 command to set the LED (or LED strip) color.
- * If pins are PWM capable (e.g., 4, 5, 6, 11) then a range of
- * luminance values can be set from 0 to 255.
- * For Neopixel LED an overall brightness parameter is also available.
- *
- * *** CAUTION ***
- *  LED Strips require a MOSFET Chip between PWM lines and LEDs,
- *  as the Arduino cannot handle the current the LEDs will require.
- *  Failure to follow this precaution can destroy your Arduino!
- *  NOTE: A separate 5V power supply is required! The Neopixel LED needs
- *  more current than the Arduino 5V linear regulator can produce.
- * *** CAUTION ***
- *
- * LED Type. Enable only one of the following two options.
- *
- */
-//#define RGB_LED
-//#define RGBW_LED
+  #if ENABLED(RGB_LED) || ENABLED(RGBW_LED)
+    #define RGB_LED_R_PIN 34
+    #define RGB_LED_G_PIN 43
+    #define RGB_LED_B_PIN 35
+    #define RGB_LED_W_PIN -1
+  #endif
 
-#if ENABLED(RGB_LED) || ENABLED(RGBW_LED)
-  #define RGB_LED_R_PIN 34
-  #define RGB_LED_G_PIN 43
-  #define RGB_LED_B_PIN 35
-  #define RGB_LED_W_PIN -1
-#endif
+  // Support for Adafruit Neopixel LED driver
+  //#define NEOPIXEL_LED
+  #if ENABLED(NEOPIXEL_LED)
+    #define NEOPIXEL_TYPE   NEO_GRBW // NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
+    #define NEOPIXEL_PIN    4        // LED driving pin on motherboard 4 => D4 (EXP2-5 on Printrboard) / 30 => PC7 (EXP3-13 on Rumba)
+    #define NEOPIXEL_PIXELS 30       // Number of LEDs in the strip
+    #define NEOPIXEL_IS_SEQUENTIAL   // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
+    #define NEOPIXEL_BRIGHTNESS 127  // Initial brightness (0-255)
+    //#define NEOPIXEL_STARTUP_TEST  // Cycle through colors at startup
+  #endif
 
-// Support for Adafruit Neopixel LED driver
-//#define NEOPIXEL_LED
-#if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE   NEO_GRBW // NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
-  #define NEOPIXEL_PIN    4        // LED driving pin on motherboard 4 => D4 (EXP2-5 on Printrboard) / 30 => PC7 (EXP3-13 on Rumba)
-  #define NEOPIXEL_PIXELS 30       // Number of LEDs in the strip
-  #define NEOPIXEL_IS_SEQUENTIAL   // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
-  #define NEOPIXEL_BRIGHTNESS 127  // Initial brightness (0-255)
-  //#define NEOPIXEL_STARTUP_TEST  // Cycle through colors at startup
-#endif
+  /**
+   * Printer Event LEDs
+   *
+   * During printing, the LEDs will reflect the printer status:
+   *
+   *  - Gradually change from blue to violet as the heated bed gets to target temp
+   *  - Gradually change from violet to red as the hotend gets to temperature
+   *  - Change to white to illuminate work surface
+   *  - Change to green once print has finished
+   *  - Turn off after the print has finished and the user has pushed a button
+   */
+  #if ENABLED(BLINKM) || ENABLED(RGB_LED) || ENABLED(RGBW_LED) || ENABLED(PCA9632) || ENABLED(NEOPIXEL_LED)
+    #define PRINTER_EVENT_LEDS
+  #endif
 
-/**
- * Printer Event LEDs
- *
- * During printing, the LEDs will reflect the printer status:
- *
- *  - Gradually change from blue to violet as the heated bed gets to target temp
- *  - Gradually change from violet to red as the hotend gets to temperature
- *  - Change to white to illuminate work surface
- *  - Change to green once print has finished
- *  - Turn off after the print has finished and the user has pushed a button
- */
-#if ENABLED(BLINKM) || ENABLED(RGB_LED) || ENABLED(RGBW_LED) || ENABLED(PCA9632) || ENABLED(NEOPIXEL_LED)
-  #define PRINTER_EVENT_LEDS
-#endif
+  /**
+   * R/C SERVO support
+   * Sponsored by TrinityLabs, Reworked by codexmas
+   */
 
-/**
- * R/C SERVO support
- * Sponsored by TrinityLabs, Reworked by codexmas
- */
+  /**
+   * Number of servos
+   *
+   * For some servo-related options NUM_SERVOS will be set automatically.
+   * Set this manually if there are extra servos needing manual control.
+   * Leave undefined or set to 0 to entirely disable the servo subsystem.
+   */
+  //#define NUM_SERVOS 3 // Servo index starts with 0 for M280 command
 
-/**
- * Number of servos
- *
- * For some servo-related options NUM_SERVOS will be set automatically.
- * Set this manually if there are extra servos needing manual control.
- * Leave undefined or set to 0 to entirely disable the servo subsystem.
- */
-//#define NUM_SERVOS 3 // Servo index starts with 0 for M280 command
+  // Delay (in milliseconds) before the next move will start, to give the servo time to reach its target angle.
+  // 300ms is a good value but you can try less delay.
+  // If the servo can't reach the requested position, increase it.
+  #define SERVO_DELAY { 300 }
 
-// Delay (in milliseconds) before the next move will start, to give the servo time to reach its target angle.
-// 300ms is a good value but you can try less delay.
-// If the servo can't reach the requested position, increase it.
-#define SERVO_DELAY { 300 }
+  // Only power servos during movement, otherwise leave off to prevent jitter
+  //#define DEACTIVATE_SERVOS_AFTER_MOVE
 
-// Only power servos during movement, otherwise leave off to prevent jitter
-//#define DEACTIVATE_SERVOS_AFTER_MOVE
-
-#endif // CONFIGURATION_H
+  #endif // CONFIGURATION_H
