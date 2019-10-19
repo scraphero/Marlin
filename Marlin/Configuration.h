@@ -556,30 +556,23 @@
       #define PROBE_MANUALLY_STEP 0.05 // mm
     #endif
 
-    #if ENABLED(ANYCUBIC_KOSSEL_PLUS)
-      // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-      #define DELTA_PRINTABLE_RADIUS 118.0 // mm
-      // Center-to-center distance of the holes in the diagonal push rods.
-      #define DELTA_DIAGONAL_ROD 267 // mm
-        // Horizontal offset from middle of printer to smooth rod center.
-      #define DELTA_SMOOTH_ROD_OFFSET 163.3 // mm
-      // Horizontal offset of the universal joints on the end effector.
-      #define DELTA_EFFECTOR_OFFSET 31 // mm
-      // Horizontal offset of the universal joints on the carriages.
-      #define DELTA_CARRIAGE_OFFSET 20.6 // mm
-      // Horizontal distance bridged by diagonal push rods when effector is centered.
-      #define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-(DELTA_EFFECTOR_OFFSET)-(DELTA_CARRIAGE_OFFSET))  //mm  Get this value from auto calibrate
-    #else
-      // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-      #define DELTA_PRINTABLE_RADIUS 90.0 // mm
-      // Center-to-center distance of the holes in the diagonal push rods.
-      #define DELTA_DIAGONAL_ROD 218.0 // mm
-      // Horizontal distance bridged by diagonal push rods when effector is centered.
-      #define DELTA_RADIUS 97.0 //mm  Get this value from auto calibrate
-    #endif
+
+    // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
+    #define DELTA_PRINTABLE_RADIUS 118.0 // mm
+    // Center-to-center distance of the holes in the diagonal push rods.
+    #define DELTA_DIAGONAL_ROD 267 // mm
+    // Horizontal offset from middle of printer to smooth rod center.
+    // #define DELTA_SMOOTH_ROD_OFFSET 163.3 // mm
+    // Horizontal offset of the universal joints on the end effector.
+    #define DELTA_EFFECTOR_OFFSET 28 // mm
+    // Horizontal offset of the universal joints on the carriages.
+    #define DELTA_CARRIAGE_OFFSET 20.6 // mm
+    // Horizontal distance bridged by diagonal push rods when effector is centered.
+    #define DELTA_RADIUS 135.4 // (DELTA_SMOOTH_ROD_OFFSET-(DELTA_EFFECTOR_OFFSET)-(DELTA_CARRIAGE_OFFSET))  //mm  Get this value from auto calibrate
+
 
     // height from z=0 to home position
-    #define DELTA_HEIGHT 290.00 // get this value from auto calibrate
+    #define DELTA_HEIGHT 283.45 // get this value from auto calibrate
 
     #define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 } // get these from auto calibrate
 
