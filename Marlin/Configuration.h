@@ -538,10 +538,10 @@
     #define DELTA_CALIBRATION_MENU
 
     // uncomment to add G33 Delta Auto-Calibration (Enable EEPROM_SETTINGS to store results)
-    #if ANYCUBIC_PROBE_VERSION > 0
+  /*  #if ANYCUBIC_PROBE_VERSION > 0
       #define DELTA_AUTO_CALIBRATION
     #endif
-
+  */
     // NOTE NB all values for DELTA_* values MUST be floating point, so always have a decimal point in them
 
     #if ENABLED(DELTA_AUTO_CALIBRATION)
@@ -560,15 +560,16 @@
     // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
     #define DELTA_PRINTABLE_RADIUS 118.0 // mm
     // Center-to-center distance of the holes in the diagonal push rods.
-    #define DELTA_DIAGONAL_ROD 267 // mm
+    #define DELTA_DIAGONAL_ROD 267.0 // mm
     // Horizontal offset from middle of printer to smooth rod center.
     #define DELTA_SMOOTH_ROD_OFFSET 163.3 // mm
     // Horizontal offset of the universal joints on the end effector.
-    #define DELTA_EFFECTOR_OFFSET 28 // mm
+    #define DELTA_EFFECTOR_OFFSET 28.0 // mm
     // Horizontal offset of the universal joints on the carriages.
     #define DELTA_CARRIAGE_OFFSET 0.0 // mm
     // Horizontal distance bridged by diagonal push rods when effector is centered.
     #define DELTA_RADIUS 130.0 // (DELTA_SMOOTH_ROD_OFFSET-(DELTA_EFFECTOR_OFFSET)-(DELTA_CARRIAGE_OFFSET))  //mm  Get this value from auto calibrate
+
 
 
     // height from z=0 to home position
