@@ -43,10 +43,10 @@
 
 // TODO 1.4 boards do have an E1 stepper driver. However the pin definitions
 // from pins_RAMPS.h are incorrect for this board. e.g., Pin 44 is the Extruder fan.
-#undef E1_STEP_PIN
-#undef E1_DIR_PIN
-#undef E1_ENABLE_PIN
-#undef E1_CS_PIN
+#define E1_STEP_PIN   36 // #undef E1_STEP_PIN
+#define E1_DIR_PIN    34 // #undef E1_DIR_PIN
+#define E1_ENABLE_PIN 30 // #undef E1_ENABLE_PIN
+// #undef E1_CS_PIN
 
 //
 // AnyCubic made the following changes to 1.1.0-RC8
